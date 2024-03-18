@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name = "investors")
 public class Investor {
     @Id
-4
+
     @GeneratedValue(strategy = GenerationType.AUTO)
 
     private Long id;
