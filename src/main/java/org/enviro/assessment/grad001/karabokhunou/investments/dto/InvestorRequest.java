@@ -20,4 +20,5 @@ public class InvestorRequest {
 //    private String status;
     private String taxId;
     private String investmentType;
+    private String email;
 }

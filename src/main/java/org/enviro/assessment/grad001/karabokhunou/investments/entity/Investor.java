@@ -34,6 +34,7 @@ public class Investor {
     private String accountNumber;
     private BigDecimal accountBalance;
     private String taxId;
+    private String email;
     private String investmentType;
     @CreationTimestamp
     private LocalDateTime createdAT;

@@ -4,27 +4,6 @@ import java.util.*;
 
 public class AccountUtils {
 
-
-//    public void accountNumber(){
-//        List<Integer> numbers = new ArrayList<>();
-//        Random random = new Random();
-//
-//        // Generate 6 random numbers
-//        for (int i = 0; i < 6; i++) {
-//            int randomNumber = random.nextInt(50) + 1; // Generates a random number between 1 and 50
-//            numbers.add(randomNumber);
-//        }
-//
-//        // Print the generated numbers
-//        for (int number : numbers) {
-//            System.out.println(number);
-//        }
-//
-//        // Combine current year and numbers into a string
-//        String combinedString = currentYear.toString() + numbers.toString();
-//        System.out.println("Combined: " + combinedString);
-//    }
-
     public static final String ACCOUNT_EXIST_CODE = "001";
     public  static final String ACCOUNT_EXISTS_MESSAGE = "The investor has an account already";
     public static final String ACCOUNT_CREATION_CODE = "002";
