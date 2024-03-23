@@ -1,7 +1,6 @@
 package org.enviro.assessment.grad001.karabokhunou.investments.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +10,7 @@ import java.math.BigInteger;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class AccountInfo {
-    private String accountName;
-    private BigInteger accountBalance;
-    private String accountNumber;
+public class CreditDebitRequest {
+    private  String accountNumber;
+    private BigInteger amount;
 }

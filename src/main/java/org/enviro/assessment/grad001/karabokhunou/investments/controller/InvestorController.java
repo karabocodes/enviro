@@ -1,5 +1,7 @@
 package org.enviro.assessment.grad001.karabokhunou.investments.controller;
 import org.enviro.assessment.grad001.karabokhunou.investments.dto.AppResponse;
+import org.enviro.assessment.grad001.karabokhunou.investments.dto.CreditDebitRequest;
+import org.enviro.assessment.grad001.karabokhunou.investments.dto.EnquiryRequest;
 import org.enviro.assessment.grad001.karabokhunou.investments.dto.InvestorRequest;
 import org.enviro.assessment.grad001.karabokhunou.investments.service.InvestorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,25 +19,18 @@ public class InvestorController {
         return investorService.createAccount(investorRequest);
     }
 
-//    @Autowired
+    @GetMapping("balanceEnquiry")
+    public AppResponse balanceEnquiry (@RequestBody EnquiryRequest request){
+        return investorService.balanceEnquiry(request);
+    }
 
-//    private WithdrawalService withdrawalService;
+    @GetMapping("nameEnquiry")
+    public String nameEnquiry(@RequestBody EnquiryRequest request){
+        return  investorService.nameEnquiry(request);
+    }
+    @PostMapping("credit")
+    public AppResponse creditAccount (@RequestBody CreditDebitRequest request) {
+        return investorService.creditAccount (request);
+    }
 
-//    @GetMapping("/investors")
-//    public ResponseEntity<List<Investor>> getAllInvestors() {
-//        List<Investor> investors = investorService.getAllInvestors();
-//        return new ResponseEntity<>(investors, HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/withdrawal-notices")
-//    public ResponseEntity<String> createWithdrawalNotice(@Valid @RequestBody WithdrawalNotice withdrawalNotice) {
-//        // Validate withdrawal notice
-//        boolean isValid = withdrawalService.validateWithdrawalNotice(withdrawalNotice);
-//        if (!isValid) {
-//            return new ResponseEntity<>("Withdrawal notice validation failed", HttpStatus.BAD_REQUEST);
-//        }
-//        // Create withdrawal notice
-//        withdrawalService.createWithdrawalNotice(withdrawalNotice);
-//        return new ResponseEntity<>("Withdrawal notice created successfully", HttpStatus.CREATED);
-//    }
 }

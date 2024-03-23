@@ -5,15 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountInfo {
-    private String accountName;
-    private BigInteger accountBalance;
+public class EnquiryRequest {
     private String accountNumber;
 }

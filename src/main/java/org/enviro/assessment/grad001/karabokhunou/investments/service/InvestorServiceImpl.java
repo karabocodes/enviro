@@ -1,9 +1,6 @@
 package org.enviro.assessment.grad001.karabokhunou.investments.service;
 
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.AccountInfo;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.AppResponse;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.EmailDetails;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.InvestorRequest;
+import org.enviro.assessment.grad001.karabokhunou.investments.dto.*;
 import org.enviro.assessment.grad001.karabokhunou.investments.entity.Investor;
 import org.enviro.assessment.grad001.karabokhunou.investments.repository.InvestorRepository;
 import org.enviro.assessment.grad001.karabokhunou.investments.utils.AccountUtils;
@@ -11,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+
 @Service
 public class InvestorServiceImpl implements  InvestorService {
 
@@ -42,7 +41,7 @@ public class InvestorServiceImpl implements  InvestorService {
                 .taxId(investorRequest.getTaxId())
                 .address(investorRequest.getAddress())
                 .accountNumber(AccountUtils.generateAccountNumber())
-                .accountBalance(BigDecimal.ZERO)
+                .accountBalance(BigInteger.ZERO)
                 .email(investorRequest.getEmail())
                 .status("ACTIVE")
                 .build();
@@ -53,7 +52,7 @@ public class InvestorServiceImpl implements  InvestorService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(savedInvestor.getEmail())
                 .subject(("Account Creation"))
-                .messageBody(("COngradulation Account has been created. \n" +
+                .messageBody(("Congratulation Account has been created. \n" +
                         "your account deatils" + savedInvestor.getAccountNumber() + " "+ savedInvestor.getFirstName()))
                 .build();
         emailService.sendEmailAlert(emailDetails);
@@ -65,6 +64,74 @@ public class InvestorServiceImpl implements  InvestorService {
                         .accountBalance(savedInvestor.getAccountBalance())
                         .accountNumber(savedInvestor.getAccountNumber())
                         .accountName(savedInvestor.getFirstName() + " " + savedInvestor.getLastName())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public AppResponse balanceEnquiry(EnquiryRequest request) {
+        //check if the provided account exists
+        boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
+        if (!isAccountExist){
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        Investor foundUser = investorRepository.findByAccountNumber(request.getAccountNumber());
+
+        return  AppResponse.builder()
+                .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_FOUND_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountBalance(foundUser.getAccountBalance())
+                        .accountNumber(foundUser.getAccountNumber())
+                        .accountName(foundUser.getFirstName() + " "+ foundUser.getLastName())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public String nameEnquiry(EnquiryRequest request) {
+        boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
+        if (!isAccountExist){
+            return AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE;
+        }
+        Investor foundUser = investorRepository.findByAccountNumber(request.getAccountNumber());
+        return foundUser.getFirstName() + " "+ foundUser.getLastName();
+    }
+
+    @Override
+    public AppResponse creditAccount(CreditDebitRequest request) {
+        // checking if account exist
+        boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
+        if (!isAccountExist){
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+        if (request.getAmount() == null) {
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
+                    .responseMessage("Invalid credit amount. Amount cannot be null.")
+                    .build();
+        }
+        Investor userToCredit = investorRepository.findByAccountNumber(request.getAccountNumber());
+        userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(request.getAmount()));
+
+        investorRepository.save(userToCredit);
+
+        return AppResponse.builder()
+                .responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountName(userToCredit.getFirstName() + " "+ userToCredit.getLastName())
+                        .accountBalance(userToCredit.getAccountBalance())
+                        .accountNumber(request.getAccountNumber())
                         .build())
                 .build();
     }

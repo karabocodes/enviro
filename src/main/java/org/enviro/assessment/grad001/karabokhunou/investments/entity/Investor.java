@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Investor {
     private String alternateNumber;
     private String status;
     private String accountNumber;
-    private BigDecimal accountBalance;
+    private BigInteger accountBalance = BigInteger.ZERO;
     private String taxId;
     private String email;
     private String investmentType;
