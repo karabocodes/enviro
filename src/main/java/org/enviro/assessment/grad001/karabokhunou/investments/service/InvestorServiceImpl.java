@@ -6,6 +6,7 @@ import org.enviro.assessment.grad001.karabokhunou.investments.repository.Investo
 import org.enviro.assessment.grad001.karabokhunou.investments.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.math.BigDecimal;
 @Service
@@ -51,7 +52,7 @@ public class InvestorServiceImpl implements  InvestorService {
                 .recipient(savedInvestor.getEmail())
                 .subject(("Account Creation"))
                 .messageBody(("Congratulation Account has been created. \n" +
-                        "your account deatils" + savedInvestor.getAccountNumber() + " "+ savedInvestor.getFirstName()))
+                        "your account deatils" + savedInvestor.getAccountNumber() + " " + savedInvestor.getFirstName()))
                 .build();
         emailService.sendEmailAlert(emailDetails);
 
@@ -70,7 +71,7 @@ public class InvestorServiceImpl implements  InvestorService {
     public AppResponse balanceEnquiry(EnquiryRequest request) {
         //check if the provided account exists
         boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
-        if (!isAccountExist){
+        if (!isAccountExist) {
             return AppResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
@@ -80,13 +81,13 @@ public class InvestorServiceImpl implements  InvestorService {
 
         Investor foundUser = investorRepository.findByAccountNumber(request.getAccountNumber());
 
-        return  AppResponse.builder()
+        return AppResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
                 .responseMessage(AccountUtils.ACCOUNT_FOUND_MESSAGE)
                 .accountInfo(AccountInfo.builder()
                         .accountBalance(foundUser.getAccountBalance())
                         .accountNumber(foundUser.getAccountNumber())
-                        .accountName(foundUser.getFirstName() + " "+ foundUser.getLastName())
+                        .accountName(foundUser.getFirstName() + " " + foundUser.getLastName())
                         .build())
                 .build();
     }
@@ -94,18 +95,18 @@ public class InvestorServiceImpl implements  InvestorService {
     @Override
     public String nameEnquiry(EnquiryRequest request) {
         boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
-        if (!isAccountExist){
+        if (!isAccountExist) {
             return AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE;
         }
         Investor foundUser = investorRepository.findByAccountNumber(request.getAccountNumber());
-        return foundUser.getFirstName() + " "+ foundUser.getLastName();
+        return foundUser.getFirstName() + " " + foundUser.getLastName();
     }
 
     @Override
     public AppResponse creditAccount(CreditDebitRequest request) {
         // checking if account exist
         boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
-        if (!isAccountExist){
+        if (!isAccountExist) {
             return AppResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
@@ -127,7 +128,7 @@ public class InvestorServiceImpl implements  InvestorService {
                 .responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE)
                 .responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE)
                 .accountInfo(AccountInfo.builder()
-                        .accountName(userToCredit.getFirstName() + " "+ userToCredit.getLastName())
+                        .accountName(userToCredit.getFirstName() + " " + userToCredit.getLastName())
                         .accountBalance(userToCredit.getAccountBalance())
                         .accountNumber(request.getAccountNumber())
                         .build())
@@ -138,7 +139,7 @@ public class InvestorServiceImpl implements  InvestorService {
     public AppResponse debitAccount(CreditDebitRequest request) {
         // checking if account exist
         boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
-        if (!isAccountExist){
+        if (!isAccountExist) {
             return AppResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
@@ -178,4 +179,112 @@ public class InvestorServiceImpl implements  InvestorService {
         }
     }
 
+    @Override
+    public AppResponse transfer(TransferRequest request) {
+        // Check if the source account exists
+//        boolean isSourceAccountExist = investorRepository.existsByAccountNumber(request.getSourceAccountNumber());
+//        if (!isSourceAccountExist) {
+//            return AppResponse.builder()
+//                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
+//                    .responseMessage("Source account doesn't exist.")
+//                    .accountInfo(null)
+//                    .build();
+//        }
+//
+//        // Check if the destination account exists
+//        boolean isDestinationAccountExist = investorRepository.existsByAccountNumber(request.getDestinationAccountNumber());
+//        if (!isDestinationAccountExist) {
+//            return AppResponse.builder()
+//                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
+//                    .responseMessage("Destination account doesn't exist.")
+//                    .accountInfo(null)
+//                    .build();
+//        }
+//
+//        // Check if the source account has sufficient balance for transfer
+//        Investor sourceAccount = investorRepository.findByAccountNumber(request.getSourceAccountNumber());
+//        BigDecimal transferAmount = BigDecimal.valueOf(request.getAmount());
+//
+//
+//        if (sourceAccount.getAccountBalance().compareTo(transferAmount) < 0) {
+//            return AppResponse.builder()
+//                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+//                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+//                    .accountInfo(null)
+//                    .build();
+//        }
+//
+//        // Debit the source account
+//        sourceAccount.setAccountBalance(sourceAccount.getAccountBalance().subtract(transferAmount));
+//        investorRepository.save(sourceAccount);
+//
+//        // Credit the destination account
+//        Investor destinationAccount = investorRepository.findByAccountNumber(request.getDestinationAccountNumber());
+//        destinationAccount.setAccountBalance(destinationAccount.getAccountBalance().add(transferAmount));
+//        investorRepository.save(destinationAccount);
+//
+//        return AppResponse.builder()
+//                .responseCode("AccountUtilsTRANSFER_SUCCESS_CODE")
+//                .responseMessage("TRANSFER_SUCCESS_MESSAGE")
+//                .accountInfo(AccountInfo.builder()
+//                        .accountName(sourceAccount.getFirstName() + " " + sourceAccount.getLastName())
+//                        .accountBalance(sourceAccount.getAccountBalance())
+//                        .accountNumber(sourceAccount.getAccountNumber())
+//                        .build())
+//                .build();
+//    }
+
+        boolean isDestinationAccountExist = investorRepository.existsByAccountNumber(request.getDestinationAccountNumber());
+
+        if (!isDestinationAccountExist) {
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        Investor sourceAccountInvestor = investorRepository.findByAccountNumber(request.getSourceAccountNumber());
+
+        if (request.getAmount().compareTo(sourceAccountInvestor.getAccountBalance()) > 0) {
+            return AppResponse.builder()
+                    .responseCode("233")
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        sourceAccountInvestor.setAccountBalance(sourceAccountInvestor.getAccountBalance().subtract(request.getAmount()));
+
+        String sourceUsername = sourceAccountInvestor.getFirstName() + " " + sourceAccountInvestor.getLastName();
+
+        investorRepository.save(sourceAccountInvestor);
+        EmailDetails debitAlert = EmailDetails.builder()
+                .subject("Debit Alert")
+                .recipient(sourceAccountInvestor.getEmail())
+                .messageBody("The sum of " + request.getAmount() + " has been deducted from your account current balance is " + sourceAccountInvestor.getAccountBalance())
+                .build();
+
+        emailService.sendEmailAlert(debitAlert);
+
+        Investor destinationAccountInvestor = investorRepository.findByAccountNumber(request.getDestinationAccountNumber());
+
+        destinationAccountInvestor.setAccountBalance(destinationAccountInvestor.getAccountBalance().add(request.getAmount()));
+//        String recipientUsername = destinationAccountInvestor.getFirstName() + " " + sourceAccountInvestor.getLastName();
+
+        investorRepository.save(destinationAccountInvestor);
+        EmailDetails creditAlert = EmailDetails.builder()
+                .subject("credit Alert")
+                .recipient(sourceAccountInvestor.getEmail())
+                .messageBody("The sum of " + request.getAmount() + " has been Deposited to your account from " + sourceAccountInvestor.getFirstName() + sourceAccountInvestor.getAccountBalance())
+                .build();
+
+//        emailService.sendEmailAlert(debitAlert);
+
+        return AppResponse.builder()
+                .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
+                .responseMessage(AccountUtils.TRANSFER_SUCCESSFUL_MESSAGE)
+                .accountInfo(null)
+                .build();
+    }
 }

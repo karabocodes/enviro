@@ -1,9 +1,6 @@
 package org.enviro.assessment.grad001.karabokhunou.investments.service;
 
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.AppResponse;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.CreditDebitRequest;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.EnquiryRequest;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.InvestorRequest;
+import org.enviro.assessment.grad001.karabokhunou.investments.dto.*;
 
 public interface InvestorService {
     AppResponse createAccount(InvestorRequest appResponse);
@@ -11,5 +8,5 @@ public interface InvestorService {
     String nameEnquiry(EnquiryRequest request);
     AppResponse creditAccount(CreditDebitRequest request);
     AppResponse debitAccount(CreditDebitRequest request);
-
+    AppResponse transfer(TransferRequest request);
 }

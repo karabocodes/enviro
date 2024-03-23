@@ -1,8 +1,5 @@
 package org.enviro.assessment.grad001.karabokhunou.investments.controller;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.AppResponse;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.CreditDebitRequest;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.EnquiryRequest;
-import org.enviro.assessment.grad001.karabokhunou.investments.dto.InvestorRequest;
+import org.enviro.assessment.grad001.karabokhunou.investments.dto.*;
 import org.enviro.assessment.grad001.karabokhunou.investments.service.InvestorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,4 +35,8 @@ public class InvestorController {
         return investorService.debitAccount (request);
     }
 
+    @PostMapping("transfer")
+    public AppResponse transfer(@RequestBody TransferRequest request){
+        return  investorService.transfer(request);
+    }
 }
