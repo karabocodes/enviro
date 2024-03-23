@@ -14,6 +14,6 @@ import java.math.BigInteger;
 @Builder
 public class AccountInfo {
     private String accountName;
-    private BigInteger accountBalance;
+    private BigDecimal accountBalance;
     private String accountNumber;
 }

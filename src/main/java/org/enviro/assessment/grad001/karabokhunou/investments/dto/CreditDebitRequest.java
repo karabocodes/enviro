@@ -12,5 +12,5 @@ import java.math.BigInteger;
 @AllArgsConstructor
 public class CreditDebitRequest {
     private  String accountNumber;
-    private BigInteger amount;
+    private BigDecimal amount;
 }

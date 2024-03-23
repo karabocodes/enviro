@@ -33,7 +33,7 @@ public class Investor {
     private String alternateNumber;
     private String status;
     private String accountNumber;
-    private BigInteger accountBalance = BigInteger.ZERO;
+    private BigDecimal accountBalance = BigDecimal.ZERO;
     private String taxId;
     private String email;
     private String investmentType;

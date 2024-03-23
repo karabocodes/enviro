@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-
 @Service
 public class InvestorServiceImpl implements  InvestorService {
 
@@ -41,7 +39,7 @@ public class InvestorServiceImpl implements  InvestorService {
                 .taxId(investorRequest.getTaxId())
                 .address(investorRequest.getAddress())
                 .accountNumber(AccountUtils.generateAccountNumber())
-                .accountBalance(BigInteger.ZERO)
+                .accountBalance(BigDecimal.ZERO)
                 .email(investorRequest.getEmail())
                 .status("ACTIVE")
                 .build();
