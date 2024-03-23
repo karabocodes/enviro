@@ -134,4 +134,48 @@ public class InvestorServiceImpl implements  InvestorService {
                 .build();
     }
 
+    @Override
+    public AppResponse debitAccount(CreditDebitRequest request) {
+        // checking if account exist
+        boolean isAccountExist = investorRepository.existsByAccountNumber(request.getAccountNumber());
+        if (!isAccountExist){
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_DOESNT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+        if (request.getAmount() == null) {
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
+                    .responseMessage("Invalid Debit amount. Amount cannot be null.")
+                    .build();
+        }
+
+        Investor userToDebit = investorRepository.findByAccountNumber(request.getAccountNumber());
+
+        // Use BigDecimal for balance and amount
+        BigDecimal availableBalance = userToDebit.getAccountBalance();
+        BigDecimal debitAmount = request.getAmount();
+        if (availableBalance.compareTo(debitAmount) < 0) {
+            return AppResponse.builder()
+                    .responseCode("233")
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        } else {
+            userToDebit.setAccountBalance(availableBalance.subtract(debitAmount));
+            investorRepository.save(userToDebit);
+            return AppResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS)
+                    .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
+                    .accountInfo(AccountInfo.builder()
+                            .accountName(userToDebit.getFirstName() + " " + userToDebit.getLastName())
+                            .accountBalance(userToDebit.getAccountBalance())
+                            .accountNumber(request.getAccountNumber())
+                            .build())
+                    .build();
+        }
+    }
+
 }

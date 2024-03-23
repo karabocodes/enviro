@@ -33,4 +33,9 @@ public class InvestorController {
         return investorService.creditAccount (request);
     }
 
+    @PostMapping("debit")
+    public AppResponse debitAccount (@RequestBody CreditDebitRequest request) {
+        return investorService.debitAccount (request);
+    }
+
 }

@@ -10,4 +10,6 @@ public interface InvestorService {
     AppResponse balanceEnquiry(EnquiryRequest request);
     String nameEnquiry(EnquiryRequest request);
     AppResponse creditAccount(CreditDebitRequest request);
+    AppResponse debitAccount(CreditDebitRequest request);
+
 }
