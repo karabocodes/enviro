@@ -2,6 +2,7 @@ package org.enviro.assessment.grad001.karabokhunou.investments.service;
 
 import org.enviro.assessment.grad001.karabokhunou.investments.dto.*;
 import org.enviro.assessment.grad001.karabokhunou.investments.entity.Investor;
+import org.enviro.assessment.grad001.karabokhunou.investments.entity.Transaction;
 import org.enviro.assessment.grad001.karabokhunou.investments.repository.InvestorRepository;
 import org.enviro.assessment.grad001.karabokhunou.investments.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class InvestorServiceImpl implements  InvestorService {
     InvestorRepository investorRepository;
     @Autowired
     EmailService emailService;
+    @Autowired
+    TransactionService transactionService;
 
     @Override
     public AppResponse createAccount(InvestorRequest investorRequest) {
@@ -52,7 +55,7 @@ public class InvestorServiceImpl implements  InvestorService {
                 .recipient(savedInvestor.getEmail())
                 .subject(("Account Creation"))
                 .messageBody(("Congratulation Account has been created. \n" +
-                        "your account deatils" + savedInvestor.getAccountNumber() + " " + savedInvestor.getFirstName()))
+                        "your account details" + savedInvestor.getAccountNumber() + " " + savedInvestor.getFirstName()))
                 .build();
         emailService.sendEmailAlert(emailDetails);
 
@@ -124,6 +127,15 @@ public class InvestorServiceImpl implements  InvestorService {
 
         investorRepository.save(userToCredit);
 
+        //Save Transaction
+        TransactionDto transactionDto = TransactionDto.builder()
+                .accountNumber(userToCredit.getAccountNumber())
+                .transactionType("Credit")
+                .amount(request.getAmount())
+                .build();
+
+        transactionService.saveTransaction(transactionDto);
+
         return AppResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE)
                 .responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE)
@@ -164,9 +176,18 @@ public class InvestorServiceImpl implements  InvestorService {
                     .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
                     .accountInfo(null)
                     .build();
-        } else {
+        }
+
+        else {
             userToDebit.setAccountBalance(availableBalance.subtract(debitAmount));
             investorRepository.save(userToDebit);
+            TransactionDto transactionDto = TransactionDto.builder()
+                    .accountNumber(userToDebit.getAccountNumber())
+                    .transactionType("Debit")
+                    .amount(request.getAmount())
+                    .build();
+
+            transactionService.saveTransaction(transactionDto);
             return AppResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS)
                     .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
@@ -182,57 +203,6 @@ public class InvestorServiceImpl implements  InvestorService {
     @Override
     public AppResponse transfer(TransferRequest request) {
         // Check if the source account exists
-//        boolean isSourceAccountExist = investorRepository.existsByAccountNumber(request.getSourceAccountNumber());
-//        if (!isSourceAccountExist) {
-//            return AppResponse.builder()
-//                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
-//                    .responseMessage("Source account doesn't exist.")
-//                    .accountInfo(null)
-//                    .build();
-//        }
-//
-//        // Check if the destination account exists
-//        boolean isDestinationAccountExist = investorRepository.existsByAccountNumber(request.getDestinationAccountNumber());
-//        if (!isDestinationAccountExist) {
-//            return AppResponse.builder()
-//                    .responseCode(AccountUtils.ACCOUNT_DOESNT_EXIST_FOUND_CODE)
-//                    .responseMessage("Destination account doesn't exist.")
-//                    .accountInfo(null)
-//                    .build();
-//        }
-//
-//        // Check if the source account has sufficient balance for transfer
-//        Investor sourceAccount = investorRepository.findByAccountNumber(request.getSourceAccountNumber());
-//        BigDecimal transferAmount = BigDecimal.valueOf(request.getAmount());
-//
-//
-//        if (sourceAccount.getAccountBalance().compareTo(transferAmount) < 0) {
-//            return AppResponse.builder()
-//                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
-//                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
-//                    .accountInfo(null)
-//                    .build();
-//        }
-//
-//        // Debit the source account
-//        sourceAccount.setAccountBalance(sourceAccount.getAccountBalance().subtract(transferAmount));
-//        investorRepository.save(sourceAccount);
-//
-//        // Credit the destination account
-//        Investor destinationAccount = investorRepository.findByAccountNumber(request.getDestinationAccountNumber());
-//        destinationAccount.setAccountBalance(destinationAccount.getAccountBalance().add(transferAmount));
-//        investorRepository.save(destinationAccount);
-//
-//        return AppResponse.builder()
-//                .responseCode("AccountUtilsTRANSFER_SUCCESS_CODE")
-//                .responseMessage("TRANSFER_SUCCESS_MESSAGE")
-//                .accountInfo(AccountInfo.builder()
-//                        .accountName(sourceAccount.getFirstName() + " " + sourceAccount.getLastName())
-//                        .accountBalance(sourceAccount.getAccountBalance())
-//                        .accountNumber(sourceAccount.getAccountNumber())
-//                        .build())
-//                .build();
-//    }
 
         boolean isDestinationAccountExist = investorRepository.existsByAccountNumber(request.getDestinationAccountNumber());
 
@@ -279,7 +249,14 @@ public class InvestorServiceImpl implements  InvestorService {
                 .messageBody("The sum of " + request.getAmount() + " has been Deposited to your account from " + sourceAccountInvestor.getFirstName() + sourceAccountInvestor.getAccountBalance())
                 .build();
 
-//        emailService.sendEmailAlert(debitAlert);
+        emailService.sendEmailAlert(creditAlert);
+        TransactionDto transactionDto = TransactionDto.builder()
+                .accountNumber(destinationAccountInvestor.getAccountNumber())
+                .transactionType("Debit")
+                .amount(request.getAmount())
+                .build();
+
+        transactionService.saveTransaction(transactionDto);
 
         return AppResponse.builder()
                 .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
